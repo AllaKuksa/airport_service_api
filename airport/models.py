@@ -23,3 +23,15 @@ class Airport(models.Model):
         return f"{self.closest_big_city} - airport {self.name}"
 
 
+class Route(models.Model):
+    source = models.ForeignKey(
+        Airport,
+        on_delete=models.CASCADE,
+        related_name="routes"
+    )
+    destination = models.ForeignKey(
+        Airport,
+        on_delete=models.CASCADE,
+        related_name="routes"
+    )
+    distance = models.PositiveIntegerField()
