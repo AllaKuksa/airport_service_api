@@ -10,3 +10,16 @@ class Crew(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class Airport(models.Model):
+    name = models.CharField(max_length=255)
+    closest_big_city = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ("closest_big_city",)
+
+    def __str__(self):
+        return f"{self.closest_big_city} - airport {self.name}"
+
+
