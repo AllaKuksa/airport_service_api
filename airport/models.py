@@ -35,3 +35,19 @@ class Route(models.Model):
         related_name="routes"
     )
     distance = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ("source", "destination", "distance",)
+
+    def __str__(self):
+        return f"Distance from {self.source.name} - {self.destination.name} is {self.distance} km"
+
+
+class AirplaneType(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
