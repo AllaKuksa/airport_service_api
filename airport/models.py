@@ -4,6 +4,7 @@ import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.text import slugify
+from django.conf import settings
 
 
 class Crew(models.Model):
@@ -124,3 +125,18 @@ class Flight(models.Model):
 
     def __str__(self):
         return f"{self.route}: {self.departure_time} - {self.arrival_time}"
+
+
+class Order(models.Model):
+    created_at = models.DateTimeField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="orders",
+    )
+
+    class Meta:
+        ordering = ("created_at", )
+
+    def __str__(self):
+        return f"{self.created_at} - {self.user}"

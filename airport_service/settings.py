@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles"
+    "rest_framework",
     "airport",
+    "user",
 ]
 
 MIDDLEWARE = [
@@ -127,3 +129,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATETIME_INPUT_FORMATS = [
     "%Y-%m-%d %H:%M:%S",
 ]
+
+AUTH_USER_MODEL = "user.User"
