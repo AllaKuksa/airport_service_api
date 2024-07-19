@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
@@ -40,7 +41,8 @@ class Route(models.Model):
         ordering = ("source", "destination", "distance",)
 
     def __str__(self):
-        return f"Distance from {self.source.name} - {self.destination.name} is {self.distance} km"
+        return (f"Distance from {self.source.name} - {self.destination.name}"
+                f" is {self.distance} km")
 
 
 class AirplaneType(models.Model):
@@ -51,3 +53,35 @@ class AirplaneType(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Airplane(models.Model):
+    name = models.CharField(max_length=255)
+    rows = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(60),
+        ]
+    )
+    seats_in_row = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ]
+    )
+    airplane_type = models.ForeignKey(
+        AirplaneType,
+        on_delete=models.CASCADE,
+        related_name="airplanes",
+    )
+
+    @property
+    def capacity(self) -> int:
+        return self.rows * self.seats_in_row
+
+    class Meta:
+        ordering = ("name",)
+
+    def __str__(self):
+        return (f"{self.name} - type {self.airplane_type.name} "
+                f"has {self.capacity} seats")
