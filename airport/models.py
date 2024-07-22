@@ -50,8 +50,8 @@ class Route(models.Model):
         ordering = ("source", "destination", "distance")
 
     def __str__(self):
-        return (f"{self.source.closest_big_city} - {self.destination.closest_big_city}"
-                f" - {self.distance} km")
+        return (f"{self.source.closest_big_city} - "
+                f"{self.destination.closest_big_city} - {self.distance} km")
 
 
 class AirplaneType(models.Model):
@@ -90,7 +90,11 @@ class Airplane(models.Model):
         on_delete=models.CASCADE,
         related_name="airplanes",
     )
-    image = models.ImageField(null=True, blank=True, upload_to=movie_image_file_path)
+    image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=movie_image_file_path
+    )
 
     @property
     def capacity(self) -> int:
@@ -121,7 +125,12 @@ class Flight(models.Model):
 
     class Meta:
         ordering = ("route", )
-        unique_together = ("route", "airplane", "departure_time", "arrival_time")
+        unique_together = (
+            "route",
+            "airplane",
+            "departure_time",
+            "arrival_time"
+        )
 
     def __str__(self):
         return f"{self.route}: {self.departure_time} - {self.arrival_time}"
