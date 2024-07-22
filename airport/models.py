@@ -30,7 +30,7 @@ class Airport(models.Model):
         ordering = ("closest_big_city",)
 
     def __str__(self):
-        return f"{self.closest_big_city} - airport {self.name}"
+        return f"{self.closest_big_city}: airport {self.name}"
 
 
 class Route(models.Model):
@@ -50,8 +50,8 @@ class Route(models.Model):
         ordering = ("source", "destination", "distance")
 
     def __str__(self):
-        return (f"Distance from {self.source.name} - {self.destination.name}"
-                f" is {self.distance} km")
+        return (f"{self.source.closest_big_city} - {self.destination.closest_big_city}"
+                f" - {self.distance} km")
 
 
 class AirplaneType(models.Model):
@@ -90,7 +90,7 @@ class Airplane(models.Model):
         on_delete=models.CASCADE,
         related_name="airplanes",
     )
-    image = models.ImageField(null=True, upload_to=movie_image_file_path)
+    image = models.ImageField(null=True, blank=True, upload_to=movie_image_file_path)
 
     @property
     def capacity(self) -> int:
@@ -100,8 +100,8 @@ class Airplane(models.Model):
         ordering = ("name",)
 
     def __str__(self):
-        return (f"{self.name} - type {self.airplane_type.name} "
-                f"has {self.capacity} seats")
+        return (f"{self.name} - type {self.airplane_type.name},  "
+                f"number of seats: {self.capacity}")
 
 
 class Flight(models.Model):
@@ -158,7 +158,7 @@ class Ticket(models.Model):
 
     class Meta:
         unique_together = ("row", "seat", "flight")
-        ordering = ("row", "seat")
+        ordering = ("flight", "row", "seat")
 
     def __str__(self):
         return f"{self.flight}  (row: {self.row}, seat: {self.seat})"
