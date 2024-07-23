@@ -3,7 +3,8 @@ from rest_framework import viewsets
 from airport.models import (
     Crew,
     Airport,
-    Route,
+    Route, 
+    AirplaneType,
 )
 from airport.serializers import (
     CrewSerializer,
@@ -11,6 +12,7 @@ from airport.serializers import (
     RouteSerializer,
     RouteListSerializer,
     RouteDetailSerializer,
+    AirplaneTypeSerializer,
 )
 
 
@@ -37,3 +39,67 @@ class RouteViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return RouteDetailSerializer
         return RouteSerializer
+
+
+class AirplaneTypeViewSet(viewsets.ModelViewSet):
+    queryset = AirplaneType.objects.all()
+    serializer_class = AirplaneTypeSerializer
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
