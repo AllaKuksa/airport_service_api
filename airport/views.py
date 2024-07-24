@@ -1,4 +1,7 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
 
 from airport.models import (
     Crew,
@@ -16,7 +19,7 @@ from airport.serializers import (
     FlightSerializer,
     FlightListSerializer,
     FlightDetailSerializer,
-    AirplaneSerializer,
+    AirplaneSerializer, AirplaneImageSerializer,
 )
 
 
@@ -51,7 +54,12 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.all()
+    queryset = Flight.objects.all().select_related(
+        "route",
+        "airplane"
+    ).prefetch_related(
+        "crew"
+    )
     serializer_class = FlightSerializer
 
     def get_serializer_class(self):
@@ -63,5 +71,26 @@ class FlightViewSet(viewsets.ModelViewSet):
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
-    queryset = Airplane.objects.all()
+    queryset = Airplane.objects.all().select_related(
+        "airplane_type"
+    )
     serializer_class = AirplaneSerializer
+
+    def get_serializer_class(self):
+        if self.action == "upload_image":
+            return AirplaneImageSerializer
+
+    @action(
+        action=["POST"],
+        detail=True,
+        permission_classes=[IsAdminUser],
+        url_path="upload_image",
+    )
+    def upload_image(self, request, pk=None):
+        airplane = self.get_object()
+        serializer = self.get_serializer(airplane, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

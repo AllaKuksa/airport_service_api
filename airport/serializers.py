@@ -137,3 +137,9 @@ class AirplaneSerializer(serializers.ModelSerializer):
             "image",
             "capacity",
         )
+
+
+class AirplaneImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Airplane
+        fields = ("id", "image")
