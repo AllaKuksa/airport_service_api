@@ -5,6 +5,7 @@ from airport.models import (
     Airport,
     Route,
     AirplaneType,
+    Flight,
 )
 
 
@@ -62,3 +63,63 @@ class AirplaneTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AirplaneType
         fields = ("id", "name")
+
+
+class FlightSerializer(serializers.ModelSerializer):
+    departure_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
+    arrival_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
+
+    class Meta:
+        model = Flight
+        fields = (
+            "id",
+            "route",
+            "airplane",
+            "crew",
+            "departure_time",
+            "arrival_time",
+            "flight_duration_minutes",
+        )
+
+
+class FlightListSerializer(FlightSerializer):
+    route_source = serializers.CharField(source="route.source")
+    route_destination = serializers.CharField(source="route.destination")
+    airplane = serializers.CharField(source="airplane.name")
+    crew = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="full_name"
+    )
+
+    class Meta:
+        model = Flight
+        fields = (
+            "id",
+            "route_source",
+            "route_destination",
+            "departure_time",
+            "arrival_time",
+            "airplane",
+            "crew"
+        )
+
+
+class FlightDetailSerializer(FlightListSerializer):
+    distance = serializers.IntegerField(source="route.distance")
+    number_of_seats = serializers.IntegerField(source="airplane.capacity")
+
+    class Meta:
+        model = Flight
+        fields = (
+            "id",
+            "route_source",
+            "route_destination",
+            "departure_time",
+            "arrival_time",
+            "flight_duration_minutes",
+            "distance",
+            "airplane",
+            "number_of_seats",
+            "crew"
+        )

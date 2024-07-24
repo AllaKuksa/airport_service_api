@@ -1,3 +1,4 @@
+import datetime
 import os
 import uuid
 
@@ -122,6 +123,10 @@ class Flight(models.Model):
     crew = models.ManyToManyField(Crew)
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
+
+    @property
+    def flight_duration_minutes(self) -> int:
+        return int((self.arrival_time - self.departure_time).total_seconds() / 60)
 
     class Meta:
         ordering = ("route", )
