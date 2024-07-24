@@ -5,7 +5,7 @@ from airport.models import (
     Airport,
     Route,
     AirplaneType,
-    Flight,
+    Flight, Airplane,
 )
 
 
@@ -122,4 +122,18 @@ class FlightDetailSerializer(FlightListSerializer):
             "airplane",
             "number_of_seats",
             "crew"
+        )
+
+
+class AirplaneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Airplane
+        fields = (
+            "id",
+            "name",
+            "rows",
+            "seats_in_row",
+            "airplane_type",
+            "image",
+            "capacity",
         )
