@@ -5,7 +5,10 @@ from airport.models import (
     Airport,
     Route,
     AirplaneType,
-    Flight, Airplane, Order,
+    Flight,
+    Airplane,
+    Order,
+    Ticket
 )
 
 
@@ -152,4 +155,10 @@ class AirplaneImageSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ("id","created_at", "user")
+        fields = ("id", "created_at")
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ("id", "row", "seat", "flight", "order")

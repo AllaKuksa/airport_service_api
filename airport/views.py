@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -7,7 +7,11 @@ from airport.models import (
     Crew,
     Airport,
     Route,
-    AirplaneType, Flight, Airplane, Order,
+    AirplaneType,
+    Flight,
+    Airplane,
+    Order,
+    Ticket
 )
 from airport.serializers import (
     CrewSerializer,
@@ -20,7 +24,9 @@ from airport.serializers import (
     FlightListSerializer,
     FlightDetailSerializer,
     AirplaneSerializer,
-    AirplaneImageSerializer, OrderSerializer,
+    AirplaneImageSerializer,
+    OrderSerializer,
+    TicketSerializer
 )
 
 
@@ -102,3 +108,17 @@ class AirplaneViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class TickerViewSet(viewsets.ModelViewSet):
+    queryset = Ticket.objects.all().select_related(
+        "flight",
+        "order"
+    )
+    serializer_class = TicketSerializer
