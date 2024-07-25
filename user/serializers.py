@@ -3,9 +3,20 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
+    date_of_birth = serializers.DateField(format="%d.%m.%Y")
+
     class Meta:
         model = get_user_model()
-        fields = ("id", "email", "password", "is_staff")
+        fields = (
+            "id",
+            "email",
+            "password",
+            "is_staff",
+            "passport_number",
+            "first_name",
+            "last_name",
+            "date_of_birth"
+        )
         read_only_fields = ("is_staff",)
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 

@@ -21,6 +21,9 @@ class UserAdmin(DjangoUserAdmin):
                     "is_superuser",
                     "groups",
                     "user_permissions",
+                    "passport_number",
+                    "date_of_birth",
+
                 )
             },
         ),
@@ -35,6 +38,13 @@ class UserAdmin(DjangoUserAdmin):
             },
         ),
     )
-    list_display = ("email", "first_name", "last_name", "is_staff")
+    list_display = (
+        "email",
+        "first_name",
+        "last_name",
+        "is_staff",
+        "passport_number",
+        "date_of_birth"
+    )
     search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)
