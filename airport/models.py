@@ -122,7 +122,9 @@ class Flight(models.Model):
 
     @property
     def flight_duration_minutes(self) -> int:
-        return int((self.arrival_time - self.departure_time).total_seconds() / 60)
+        return int(
+            (self.arrival_time - self.departure_time).total_seconds() / 60
+        )
 
     class Meta:
         ordering = ("route", )
@@ -181,8 +183,10 @@ class Ticket(models.Model):
                 raise error_to_raise(
                     {
                         ticket_attr_name: f"{ticket_attr_name} "
-                                          f"number must be in available range: "
-                                          f"(1, {airplane_attr_name}): (1, {count_attrs})"
+                                          f"number must be "
+                                          f"in available range: "
+                                          f"(1, {airplane_attr_name}): "
+                                          f"(1, {count_attrs})"
                     }
                 )
 

@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+from django.db.models import F, Count
 
 from airport.models import (
     Crew,
@@ -66,6 +67,12 @@ class FlightViewSet(viewsets.ModelViewSet):
         "airplane"
     ).prefetch_related(
         "crew"
+    ).annotate(
+        tickets_available=F(
+            "airplane__rows"
+        ) * F(
+            "airplane__seats_in_row"
+        ) - Count("tickets")
     )
     serializer_class = FlightSerializer
 
