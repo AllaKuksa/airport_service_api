@@ -7,7 +7,7 @@ from airport.models import (
     Crew,
     Airport,
     Route,
-    AirplaneType, Flight, Airplane,
+    AirplaneType, Flight, Airplane, Order,
 )
 from airport.serializers import (
     CrewSerializer,
@@ -20,7 +20,7 @@ from airport.serializers import (
     FlightListSerializer,
     FlightDetailSerializer,
     AirplaneSerializer,
-    AirplaneImageSerializer,
+    AirplaneImageSerializer, OrderSerializer,
 )
 
 
@@ -97,3 +97,8 @@ class AirplaneViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
