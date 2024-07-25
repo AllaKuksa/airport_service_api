@@ -28,7 +28,7 @@ class RouteSerializer(serializers.ModelSerializer):
 
 
 class RouteListSerializer(RouteSerializer):
-    source_city = serializers.CharField(source="source.closest_big_city")
+    source_city = serializers.CharField(source="source.closest_big_city", read_only=True)
     destination_city = serializers.CharField(
         source="destination.closest_big_city"
     )
@@ -44,8 +44,8 @@ class RouteListSerializer(RouteSerializer):
 
 
 class RouteDetailSerializer(RouteListSerializer):
-    source_airport = serializers.CharField(source="source.name")
-    destination_airport = serializers.CharField(source="destination.name")
+    source_airport = serializers.CharField(source="source.name", read_only=True)
+    destination_airport = serializers.CharField(source="destination.name", read_only=True)
 
     class Meta:
         model = Route
@@ -83,9 +83,9 @@ class FlightSerializer(serializers.ModelSerializer):
 
 
 class FlightListSerializer(FlightSerializer):
-    route_source = serializers.CharField(source="route.source")
-    route_destination = serializers.CharField(source="route.destination")
-    airplane = serializers.CharField(source="airplane.name")
+    route_source = serializers.CharField(source="route.source", read_only=True)
+    route_destination = serializers.CharField(source="route.destination", read_only=True)
+    airplane = serializers.CharField(source="airplane.name", read_only=True)
     crew = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -106,8 +106,8 @@ class FlightListSerializer(FlightSerializer):
 
 
 class FlightDetailSerializer(FlightListSerializer):
-    distance = serializers.IntegerField(source="route.distance")
-    number_of_seats = serializers.IntegerField(source="airplane.capacity")
+    distance = serializers.IntegerField(source="route.distance", read_only=True)
+    number_of_seats = serializers.IntegerField(source="airplane.capacity", read_only=True)
 
     class Meta:
         model = Flight
@@ -126,6 +126,9 @@ class FlightDetailSerializer(FlightListSerializer):
 
 
 class AirplaneSerializer(serializers.ModelSerializer):
+    airplane_type_name = serializers.CharField(source="airplane_type.name", read_only=True)
+    airplane_type = serializers.PrimaryKeyRelatedField(queryset=AirplaneType.objects.all(), write_only=True)
+
     class Meta:
         model = Airplane
         fields = (
@@ -133,6 +136,7 @@ class AirplaneSerializer(serializers.ModelSerializer):
             "name",
             "rows",
             "seats_in_row",
+            "airplane_type_name",
             "airplane_type",
             "image",
             "capacity",
