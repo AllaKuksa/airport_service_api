@@ -27,7 +27,8 @@ from airport.serializers import (
     AirplaneSerializer,
     AirplaneImageSerializer,
     OrderSerializer,
-    TicketSerializer, TicketListSerializer
+    TicketSerializer,
+    TicketListSerializer
 )
 
 
@@ -131,6 +132,6 @@ class TickerViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
 
     def get_serializer_class(self):
-        if self.action == "list":
+        if self.action in ("list", "retrieve"):
             return TicketListSerializer
         return TicketSerializer

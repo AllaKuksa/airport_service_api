@@ -12,6 +12,7 @@ from airport.models import (
     Order,
     Ticket
 )
+from user.serializers import UserDetailSerializer
 
 
 class CrewSerializer(serializers.ModelSerializer):
@@ -125,11 +126,6 @@ class FlightListSerializer(FlightSerializer):
         read_only=True
     )
     airplane = serializers.CharField(source="airplane.name", read_only=True)
-    crew = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field="full_name"
-    )
     tickets_available = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -142,7 +138,6 @@ class FlightListSerializer(FlightSerializer):
             "arrival_time",
             "airplane",
             "tickets_available",
-            "crew"
         )
 
 
@@ -173,10 +168,16 @@ class TicketListSerializer(TicketSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     tickets = TicketListSerializer(many=True, read_only=False, allow_empty=False)
+    user = UserDetailSerializer(read_only=True, many=False)
 
     class Meta:
         model = Order
-        fields = ("id", "created_at", "tickets")
+        fields = (
+            "id",
+            "created_at",
+            "tickets",
+            "user"
+        )
 
     def create(self, validated_data):
         with transaction.atomic():
@@ -185,6 +186,17 @@ class OrderSerializer(serializers.ModelSerializer):
             for ticket_data in tickets_data:
                 Ticket.objects.create(order=order, **ticket_data)
             return order
+
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    user = UserDetailSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = Order
+        fields = (
+            "id",
+            "user"
+        )
 
 
 class TicketSeatsSerializer(TicketSerializer):
