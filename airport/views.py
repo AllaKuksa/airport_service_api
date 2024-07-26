@@ -27,7 +27,7 @@ from airport.serializers import (
     AirplaneSerializer,
     AirplaneImageSerializer,
     OrderSerializer,
-    TicketSerializer
+    TicketSerializer, TicketListSerializer
 )
 
 
@@ -44,7 +44,7 @@ class AirportViewSet(viewsets.ModelViewSet):
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all().select_related(
         "source",
-        "destination"
+        "destination",
     )
     serializer_class = RouteSerializer
 
@@ -129,3 +129,8 @@ class TickerViewSet(viewsets.ModelViewSet):
         "order"
     )
     serializer_class = TicketSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return TicketListSerializer
+        return TicketSerializer
