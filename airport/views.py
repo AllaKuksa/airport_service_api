@@ -41,11 +41,21 @@ class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
 
+    def get_queryset(self):
+        closest_big_city = self.request.query_params.get("closest_big_city")
+
+        queryset = self.queryset
+
+        if closest_big_city:
+            queryset = queryset.filter(closest_big_city__icontains=closest_big_city)
+
+        return queryset.distinct()
+
 
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all().select_related(
         "source",
-        "destination",
+        "destination"
     )
     serializer_class = RouteSerializer
 
@@ -114,7 +124,9 @@ class AirplaneViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().select_related(
+        "user"
+    )
     serializer_class = OrderSerializer
 
     def get_queryset(self):
@@ -126,8 +138,9 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 class TickerViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all().select_related(
-        "flight",
-        "order"
+        "flight__route__source",
+        "flight__route__destination",
+        "flight__airplane"
     )
     serializer_class = TicketSerializer
 
