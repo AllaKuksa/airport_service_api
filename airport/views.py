@@ -74,8 +74,9 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all().select_related(
-        "route",
-        "airplane"
+        "airplane",
+        "route__source",
+        "route__destination"
     ).prefetch_related(
         "crew"
     ).annotate(
@@ -93,6 +94,22 @@ class FlightViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return FlightDetailSerializer
         return FlightSerializer
+
+    def get_queryset(self):
+        departure_time = self.request.query_params.get("departure_time")
+        route_source = self.request.query_params.get("route_source")
+        route_destination = self.request.query_params.get("route_destination")
+
+        queryset = self.queryset
+
+        if departure_time:
+            queryset = queryset.filter(departure_time__icontains=departure_time)
+        if route_source:
+            queryset = queryset.filter(route__source__name__icontains=route_source)
+        if route_destination:
+            queryset = queryset.filter(route__destination__name__icontains=route_destination)
+
+        return queryset.distinct()
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
@@ -148,3 +165,18 @@ class TickerViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "retrieve"):
             return TicketListSerializer
         return TicketSerializer
+
+    @staticmethod
+    def _params_to_ints(qs):
+        """Converts a list of string IDs to a list of integers"""
+        return [int(str_id) for str_id in qs.split(",")]
+
+    def get_queryset(self):
+        order = self.request.query_params.get("order")
+        queryset = self.queryset
+
+        if order:
+            order_ids = self._params_to_ints(order)
+            queryset = queryset.filter(order_id__in=order_ids)
+
+        return queryset.distinct()
