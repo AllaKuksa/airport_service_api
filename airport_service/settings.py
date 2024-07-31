@@ -140,3 +140,8 @@ DATETIME_INPUT_FORMATS = [
 ]
 
 AUTH_USER_MODEL = "user.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 5
+}
