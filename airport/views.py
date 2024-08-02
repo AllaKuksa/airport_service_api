@@ -1,3 +1,5 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -50,6 +52,19 @@ class AirportViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(closest_big_city__icontains=closest_big_city)
 
         return queryset.distinct()
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="closest_big_city",
+                type=OpenApiTypes.STR,
+                description="Filter by closest_big_city"
+            )
+        ]
+    )
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
@@ -111,6 +126,29 @@ class FlightViewSet(viewsets.ModelViewSet):
 
         return queryset.distinct()
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="departure_time",
+                type=OpenApiTypes.DATE,
+                description="Filter by departure time"
+            ),
+            OpenApiParameter(
+                name="route_source",
+                type=OpenApiTypes.STR,
+                description="Filter by route source"
+            ),
+            OpenApiParameter(
+                name="route_destination",
+                type=OpenApiTypes.STR,
+                description="Filter by route destination"
+            )
+        ]
+    )
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all().select_related(
@@ -167,17 +205,24 @@ class TickerViewSet(viewsets.ModelViewSet):
             return TicketListSerializer
         return TicketSerializer
 
-    @staticmethod
-    def _params_to_ints(qs):
-        """Converts a list of string IDs to a list of integers"""
-        return [int(str_id) for str_id in qs.split(",")]
-
     def get_queryset(self):
-        order = self.request.query_params.get("order")
+        order_id_str = self.request.query_params.get("order")
         queryset = self.queryset
 
-        if order:
-            order_ids = self._params_to_ints(order)
-            queryset = queryset.filter(order_id__in=order_ids)
+        if order_id_str:
+            queryset = queryset.filter(order_id=int(order_id_str))
 
         return queryset.distinct()
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="order",
+                type=OpenApiTypes.INT,
+                description="Filter by order id (ex. ?order=2)"
+            )
+        ]
+    )
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
