@@ -49,7 +49,9 @@ class AirportViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
 
         if closest_big_city:
-            queryset = queryset.filter(closest_big_city__icontains=closest_big_city)
+            queryset = queryset.filter(
+                closest_big_city__icontains=closest_big_city
+            )
 
         return queryset.distinct()
 
@@ -62,7 +64,6 @@ class AirportViewSet(viewsets.ModelViewSet):
             )
         ]
     )
-
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -112,17 +113,23 @@ class FlightViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         departure_time = self.request.query_params.get("departure_time")
-        route_source = self.request.query_params.get("route_source")
-        route_destination = self.request.query_params.get("route_destination")
+        source = self.request.query_params.get("route_source")
+        destination = self.request.query_params.get("route_destination")
 
         queryset = self.queryset
 
         if departure_time:
-            queryset = queryset.filter(departure_time__icontains=departure_time)
-        if route_source:
-            queryset = queryset.filter(route__source__name__icontains=route_source)
-        if route_destination:
-            queryset = queryset.filter(route__destination__name__icontains=route_destination)
+            queryset = queryset.filter(
+                departure_time__icontains=departure_time
+            )
+        if source:
+            queryset = queryset.filter(
+                route__source__closest_big_city__icontains=source
+            )
+        if destination:
+            queryset = queryset.filter(
+                route__destination__closest_big_city__icontains=destination
+            )
 
         return queryset.distinct()
 
@@ -145,7 +152,6 @@ class FlightViewSet(viewsets.ModelViewSet):
             )
         ]
     )
-
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -223,6 +229,5 @@ class TickerViewSet(viewsets.ModelViewSet):
             )
         ]
     )
-
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
