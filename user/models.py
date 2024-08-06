@@ -43,8 +43,6 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
-    passport_number = models.CharField(max_length=12, unique=True)
-    date_of_birth = models.DateField()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
