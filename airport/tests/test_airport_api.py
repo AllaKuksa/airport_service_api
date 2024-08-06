@@ -1,8 +1,12 @@
+import os
+import tempfile
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils.timezone import make_aware
 from rest_framework import status
 from rest_framework.test import APIClient
+from PIL import Image
 from django.urls import reverse
 from datetime import datetime
 
@@ -12,13 +16,24 @@ from airport.models import (
     AirplaneType,
     Airplane, Crew, Flight
 )
-from airport.serializers import FlightListSerializer, FlightDetailSerializer
+from airport.serializers import (
+    FlightListSerializer,
+    FlightDetailSerializer)
 
 FLIGHT_URL = reverse("airport:flight-list")
+AIRPLANE_URL = reverse("airport:airplane-list")
+
+
+def image_upload_url(airplane_id):
+    return reverse("airport:airplane-upload-image", args=[airplane_id])
 
 
 def detail_url(flight_id):
     return reverse("airport:flight-detail", args=[flight_id])
+
+
+def detail_airplane_url(airplane_id):
+    return reverse("airport:airplane-detail", args=[airplane_id])
 
 
 def sample_airport(**params):
@@ -192,3 +207,87 @@ class AuthorizedFlightAPITests(TestCase):
         response = self.client.post(FLIGHT_URL, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AirplaneImageUploadTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_superuser(
+            email="test@test.com",
+            password="<PASSWORD>",
+            passport_number="123456",
+            date_of_birth="1990-12-13"
+        )
+        self.client.force_authenticate(self.user)
+        self.client.force_authenticate(user=self.user)
+
+        self.airplane_type = sample_airplane_type(name="Boeing Test")
+        self.airplane = sample_airplane(airplane_type=self.airplane_type)
+
+    def tearDown(self):
+        self.airplane.image.delete()
+
+    def test_upload_image_to_airplane(self):
+        url = image_upload_url(self.airplane.id)
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as ntf:
+            img = Image.new("RGB", (10, 10))
+            img.save(ntf, format="JPEG")
+            ntf.seek(0)
+            res = self.client.post(url, {"image": ntf}, format="multipart")
+        self.airplane.refresh_from_db()
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn("image", res.data)
+        self.assertTrue(os.path.exists(self.airplane.image.path))
+
+    def test_upload_image_bad_request(self):
+        url = image_upload_url(self.airplane.id)
+        res = self.client.post(url, {"image": "not image"}, format="multipart")
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_post_image_to_airplane_list(self):
+        url = AIRPLANE_URL
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as ntf:
+            img = Image.new("RGB", (10, 10))
+            img.save(ntf, format="JPEG")
+            ntf.seek(0)
+            res = self.client.post(
+                url,
+                {
+                    "name": "Test",
+                    "rows": 5,
+                    "seats_in_row": 5,
+                    "airplane_type": [self.airplane_type.id],
+                    "image": ntf,
+                },
+                format="multipart",
+            )
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        airplane = Airplane.objects.get(name="Test")
+        self.assertTrue(airplane.image)
+        self.assertTrue(os.path.exists(airplane.image.path))
+
+    def test_image_url_is_shown_on_airplane_detail(self):
+        url = image_upload_url(self.airplane.id)
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as ntf:
+            img = Image.new("RGB", (10, 10))
+            img.save(ntf, format="JPEG")
+            ntf.seek(0)
+            self.client.post(url, {"image": ntf}, format="multipart")
+        res = self.client.get(detail_airplane_url(self.airplane.id))
+
+        self.assertIn("image", res.data)
+
+    def test_image_url_is_shown_on_airplane_list(self):
+        url = image_upload_url(self.airplane.id)
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as ntf:
+            img = Image.new("RGB", (10, 10))
+            img.save(ntf, format="JPEG")
+            ntf.seek(0)
+            self.client.post(url, {"image": ntf}, format="multipart")
+        res = self.client.get(AIRPLANE_URL)
+
+        for airplane in res.data["results"]:
+            self.assertIn("image", airplane)
