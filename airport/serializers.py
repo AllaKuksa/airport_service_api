@@ -167,12 +167,11 @@ class TicketListSerializer(TicketSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
-    tickets = TicketListSerializer(
+    tickets = TicketSerializer(
         many=True,
-        read_only=False,
-        allow_empty=False
+        required=False,
+        allow_empty=True
     )
-    user = UserDetailSerializer(read_only=True, many=False)
 
     class Meta:
         model = Order
@@ -180,27 +179,19 @@ class OrderSerializer(serializers.ModelSerializer):
             "id",
             "created_at",
             "tickets",
-            "user"
         )
 
     def create(self, validated_data):
         with transaction.atomic():
-            tickets_data = validated_data.pop("tickets")
+            tickets_data = validated_data.pop("tickets", [])
             order = Order.objects.create(**validated_data)
             for ticket_data in tickets_data:
                 Ticket.objects.create(order=order, **ticket_data)
             return order
 
 
-class OrderDetailSerializer(serializers.ModelSerializer):
-    user = UserDetailSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = Order
-        fields = (
-            "id",
-            "user"
-        )
+class OrderListSerializer(OrderSerializer):
+    tickets = TicketListSerializer(many=True, read_only=True)
 
 
 class TicketSeatsSerializer(TicketSerializer):
