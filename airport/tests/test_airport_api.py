@@ -112,9 +112,7 @@ class AuthorizedFlightAPITests(TestCase):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
             email="test@test.com",
-            password="<PASSWORD>",
-            passport_number="123456",
-            date_of_birth="1990-12-13"
+            password="<PASSWORD>"
         )
         self.client.force_authenticate(user=self.user)
 
@@ -214,9 +212,7 @@ class AirplaneImageUploadTests(TestCase):
         self.client = APIClient()
         self.user = get_user_model().objects.create_superuser(
             email="test@test.com",
-            password="<PASSWORD>",
-            passport_number="123456",
-            date_of_birth="1990-12-13"
+            password="<PASSWORD>"
         )
         self.client.force_authenticate(self.user)
         self.client.force_authenticate(user=self.user)
