@@ -16,8 +16,9 @@ Install PostgresSQL and create db
    DB_USER=<your db username>
    DB_PASSWORD=<your db user password>
    SECRET_KEY=<your secret key>
-7. `python manage.py migrate`
-8. `python manage.py runserver`
+7. `python manage.py makemigrations`
+8. `python manage.py migrate`
+9. `python manage.py runserver`
 ___
 ## Run with docker
 Docker should be installed
@@ -29,4 +30,22 @@ Docker should be installed
  - `create user  /api/user/register/`
  - `get access token  /api/user/token/`
 ### DB Structure:
+![image](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/develop/airport.png)
 ### Features
+ - JWT authenticated
+ - Admin panel /admin/
+ - Documentation is located at /api/schema/swagger-ui/
+ - Managing orders and tickets
+ - Creating Crews
+ - Creating Airports
+ - Creating Routes with Airports
+ - Creating Airplanes with Airplanes types
+ - Creating Flights with Airplanes and Routes
+ - Filtering Flights, Airports, Airplanes, Tickets
+ - Creating User by e-mail and password
+ - Tickets validation
+ - Pagination
+ - Throttling
+ - Permissions
+
+Cre List
