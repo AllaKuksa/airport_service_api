@@ -42,10 +42,45 @@ Docker should be installed
  - Creating Airplanes with Airplanes types
  - Creating Flights with Airplanes and Routes
  - Filtering Flights, Airports, Airplanes, Tickets
+ - Uploading images to Airplanes
  - Creating User by e-mail and password
  - Tickets validation
  - Pagination
  - Throttling
  - Permissions
 
-Cre List
+### Crew List
+![Crew List](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/1_Crew%20List.png)
+
+### Airport List
+![Airport List](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/2_Airport%20List.png)
+
+### Route List
+![Route List](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/3_Route%20List.png)
+
+### Route Details
+![Route Details](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/4_Route%20Details.png)
+
+### Airplane Type List
+![Airplane Type](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/5_Airplane%20type%20List.png)
+
+### Flight List
+![Flight List](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/6_Flight%20List.png)
+
+### Flight Details
+![Flight Details](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/7_Flight%20Detail.png)
+
+### Airplane List
+![Airplane List](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/8_Airplaine%20List.png)
+
+### Order List
+![Order List](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/9_Order%20List.png)
+
+### Ticket List
+![Ticket List](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/10_Ticket%20List.png)
+
+### Ticket Details
+![Ticket Details](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/11_Ticket%20Details.png)
+
+### Creating User
+![](https://raw.githubusercontent.com/AllaKuksa/airport_service_api/32aaa67a7c0427ac1b737d97256e89abb2fa3535/12_Creating%20User.png)
